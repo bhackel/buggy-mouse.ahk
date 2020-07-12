@@ -1,30 +1,7 @@
 /*
-** Buggy-Mouse.ahk - Fix a buggy mouse. Stop it from double-clicking when you try to single-click.
-**
-**  	NOTE: Please use this URL when linking to Buggy Mouse: r.secsrv.net/AutoHotkey/Scripts/Buggy-Mouse
-**
-**   Updated: Thu, Nov 1, 2012 --- 11/1/12, 10:19:19am EDT
-**  Location: r.secsrv.net/AutoHotkey/Scripts/Buggy-Mouse
-**
-**  Keywords: mouse double clicks when I click once
-**  Keywords: mouse double clicks when I single click
-**  Keywords: mouse double clicks on its own
-**  Keywords: mouse double clicks with one click
-**  Keywords: mouse double clicks on single click
-**  Keywords: mouse double clicks on one click
-**  Keywords: mouse double-clicking when you single-click
-**  Keywords: set mouse minimum double click speed
-**  Keywords: debounce mouse
-**
-**    Author: JSLover - r.secsrv.net/JSLover - r.secsrv.net/JSLoverAHK
-**
-**  	NOTE: Please use AutoHotkey 1.1+ for this script!
-**  			AHKScript.net/download/ahk-install.exe
-**  			AHKScript.net/download
-**  			AHKScript.net/boards
-**  			AHKScript.net
-**
-**  	NOTE: Compiled version available here: r.secsrv.net/AutoHotkey/Scripts/Buggy-Mouse.exe
+**    Buggy-Mouse.ahk - Fix a buggy mouse. Stop it from double-clicking when you try to single-click.
+**    Authors: JSLover - Forked by bhackel
+**    AutoHotkey 1.1+
 **
 */
 #SingleInstance force
@@ -35,12 +12,6 @@ OnExit, OnExit
 ;// Minimum double-click time. Any lower & it will be blocked (as being inhumanly fast).
 DoubleClickMin_ms:=90
 
-;// *** DISABLED *** ;// Minimum click after mouse-up time. Any lower & it will be blocked (as being inhumanly fast).
-;// *** DISABLED *** ClickAfterMouseUpMin_ms:=100
-
-;// **************************** /Settings ****************************
-
-;// **************************** Advanded Settings ****************************
 
 ;// Enable logging if you need to report a bug.
 ;// Default (Disabled): Log=0
@@ -55,7 +26,7 @@ Debug=0
 ;// Note: Requires Debug (above) to be enabled (or no debugging will happen at all)
 Debug_OnlyBlocked=1
 
-;// **************************** /Advanded Settings ****************************
+;// **************************** / Settings ****************************
 
 Gosub, OnStartup
 
@@ -66,11 +37,11 @@ Text_Debug=Debug
 Text_Debug_OnlyBlocked=Debug (only blocked)
 
 Menu, Tray, Add, %Text_ClicksBlocked%, BuggyMouse_MenuSelect_ClicksBlocked
-	Text_ClicksBlocked_MenuCurrent:=Text_ClicksBlocked
-	Menu, Tray, Default, %Text_ClicksBlocked%
+    Text_ClicksBlocked_MenuCurrent:=Text_ClicksBlocked
+    Menu, Tray, Default, %Text_ClicksBlocked%
 Menu, Tray, Add, %Text_Debug%, BuggyMouse_MenuSelect_Debug
 Menu, Tray, Add, %Text_Debug_OnlyBlocked%, BuggyMouse_MenuSelect_Debug_OnlyBlocked
-	Menu, Tray, Disable, %Text_Debug_OnlyBlocked%
+    Menu, Tray, Disable, %Text_Debug_OnlyBlocked%
 
 Menu, Tray, MainWindow
 Menu, Tray, NoStandard
@@ -82,11 +53,11 @@ Menu, Tray, Standard
 ;// BuggyMouse_Debug:=1
 ;// BuggyMouse_Debug_OnlyBlocked:=1
 if (Debug) {
-	Gosub, BuggyMouse_MenuSelect_Debug
+    Gosub, BuggyMouse_MenuSelect_Debug
 }
 
 if (Debug_OnlyBlocked) {
-	Gosub, BuggyMouse_MenuSelect_Debug_OnlyBlocked
+    Gosub, BuggyMouse_MenuSelect_Debug_OnlyBlocked
 }
 return
 
@@ -98,8 +69,8 @@ logfile=%logdir%\%logfilename%
 time:=time()
 logmsg=
 (LTrim
-	%A_ScriptName%   Started`t`t%time%
-	`  Status`t`tUpDn`t  Key`t`t`tReason`t`t`t`tWindow`n
+    %A_ScriptName%   Started`t`t%time%
+    `  Status`t`tUpDn`t  Key`t`t`tReason`t`t`t`tWindow`n
 )
 log(logmsg)
 return
@@ -108,7 +79,7 @@ OnExit:
 time:=time()
 logmsg=
 (LTrim
-	%A_ScriptName%    Exited`t`t%time%`n`n
+    %A_ScriptName%    Exited`t`t%time%`n`n
 )
 log(logmsg)
 ExitApp
@@ -136,29 +107,29 @@ DoubleClickTooFast:=TimeSinceLastMouseDown<=DoubleClickMin_ms
 ;// if ((A_ThisHotkey==LastMouseDown && DoubleClickTooFast) || ClickAfterMouseUpTooSoon) {
 if (A_ThisHotkey==LastMouseDown && (DoubleClickTooFast || ClickAfterMouseUpTooSoon)) {
 ;// if (A_TimeSincePriorHotkey<=DoubleClickMin_ms) {
-	reason:=DoubleClickTooFast ? "DoubleClickTooFast" "(" TimeSinceLastMouseDown ")" "(" DoubleClickMin_ms ")"
-			: ClickAfterMouseUpTooSoon ? "ClickAfterMouseUpTooSoon" "(" TimeSinceLastMouseUp ")" "(" ClickAfterMouseUpMin_ms ")"
-			: "Unknown"
-	msg=`nblocked (%reason%)
-	blockeddown:=1
-	BlockedCount_Down++
-	BlockedCount_%A_ThisHotkey_VarSafe%++
-	Gosub, BuggyMouse_UpdateStatus_ClicksBlocked
+    reason:=DoubleClickTooFast ? "DoubleClickTooFast" "(" TimeSinceLastMouseDown ")" "(" DoubleClickMin_ms ")"
+            : ClickAfterMouseUpTooSoon ? "ClickAfterMouseUpTooSoon" "(" TimeSinceLastMouseUp ")" "(" ClickAfterMouseUpMin_ms ")"
+            : "Unknown"
+    msg=`nblocked (%reason%)
+    blockeddown:=1
+    BlockedCount_Down++
+    BlockedCount_%A_ThisHotkey_VarSafe%++
+    Gosub, BuggyMouse_UpdateStatus_ClicksBlocked
 
-	log_action:="BLOCKED`t"
+    log_action:="BLOCKED`t"
 } else {
-	reason:=""
-	Send, {Blind}{%A_ThisHotkey_KeyName% DownTemp}
-	msg=`nSent, {Blind}{%A_ThisHotkey_KeyName% DownTemp}`n`n
-	(LTrim C
-		if (%A_ThisHotkey%==%LastMouseDown% && (%DoubleClickTooFast% || %ClickAfterMouseUpTooSoon%))
-	)
+    reason:=""
+    Send, {Blind}{%A_ThisHotkey_KeyName% DownTemp}
+    msg=`nSent, {Blind}{%A_ThisHotkey_KeyName% DownTemp}`n`n
+    (LTrim C
+        if (%A_ThisHotkey%==%LastMouseDown% && (%DoubleClickTooFast% || %ClickAfterMouseUpTooSoon%))
+    )
 
-	log_action:="`tallowed"
+    log_action:="`tallowed"
 }
-	BuggyMouse_DebugMsg_down=%di%: %A_ThisHotkey%(%TimeSinceLastMouseDown%)%LastMouseDown%%msg%
-	msg=
-	Gosub, BuggyMouse_Debug
+    BuggyMouse_DebugMsg_down=%di%: %A_ThisHotkey%(%TimeSinceLastMouseDown%)%LastMouseDown%%msg%
+    msg=
+    Gosub, BuggyMouse_Debug
 LastMouseDown:=A_ThisHotkey
 LastMouseDown_ts:=A_TickCount
 
@@ -182,22 +153,22 @@ TimeSinceLastMouseUp:=A_TickCount-LastMouseUp_ts
 ;// if (A_ThisHotkey=A_PriorHotkey && A_TimeSincePriorHotkey<=DoubleClickMin_ms) {
 ;// if (A_ThisHotkey=LastMouseUp && A_TimeSincePriorHotkey<=DoubleClickMin_ms) {
 if (blockeddown) {
-	msg=`nblocked
-	blockedup:=1
-	BlockedCount_Up++
-	BlockedCount_%A_ThisHotkey_VarSafe%++
-	Gosub, BuggyMouse_UpdateStatus_ClicksBlocked
+    msg=`nblocked
+    blockedup:=1
+    BlockedCount_Up++
+    BlockedCount_%A_ThisHotkey_VarSafe%++
+    Gosub, BuggyMouse_UpdateStatus_ClicksBlocked
 
-	log_action:="BLOCKED`t"
+    log_action:="BLOCKED`t"
 } else {
-	Send, {Blind}{%A_ThisHotkey_KeyName% up}
-	msg=`nSent, {Blind}{%A_ThisHotkey_KeyName% up}
-	log_action:="`tallowed"
+    Send, {Blind}{%A_ThisHotkey_KeyName% up}
+    msg=`nSent, {Blind}{%A_ThisHotkey_KeyName% up}
+    log_action:="`tallowed"
 }
 ;// if (BuggyMouse_Debug) {
-	BuggyMouse_DebugMsg_up=%ui%: %A_ThisHotkey%(%TimeSinceLastMouseUp%)%LastMouseUp%%msg%
-	msg=
-	Gosub, BuggyMouse_Debug
+    BuggyMouse_DebugMsg_up=%ui%: %A_ThisHotkey%(%TimeSinceLastMouseUp%)%LastMouseUp%%msg%
+    msg=
+    Gosub, BuggyMouse_Debug
 ;// }
 blockeddown=
 blockedup=
@@ -213,11 +184,11 @@ BuggyMouse_Debug_ShowLastMsg:
 BuggyMouse_Debug:
 CoordMode, Tooltip
 if (A_ThisLabel="BuggyMouse_Debug_ShowLastMsg"
-		|| (BuggyMouse_Debug && (!BuggyMouse_Debug_OnlyBlocked
-			|| (BuggyMouse_Debug_OnlyBlocked && (blockeddown||blockedup))))) {
-	Tooltip, %BuggyMouse_DebugMsg_down%`n`n%BuggyMouse_DebugMsg_up%, 819, 619
+        || (BuggyMouse_Debug && (!BuggyMouse_Debug_OnlyBlocked
+            || (BuggyMouse_Debug_OnlyBlocked && (blockeddown||blockedup))))) {
+    Tooltip, %BuggyMouse_DebugMsg_down%`n`n%BuggyMouse_DebugMsg_up%, 819, 619
 } else {
-	Tooltip
+    Tooltip
 }
 return
 
@@ -232,18 +203,18 @@ return
 BuggyMouse_MenuSelect_ClicksBlocked:
 msgbox, 64, ,
 (LTrim C
-	%Text_ClicksBlocked_MenuCurrent%
+    %Text_ClicksBlocked_MenuCurrent%
 
-	Down(%BlockedCount_Down%)
-	Up(%BlockedCount_Up%)
+    Down(%BlockedCount_Down%)
+    Up(%BlockedCount_Up%)
 
-	LButton(%BlockedCount_LButton%)
-	MButton(%BlockedCount_MButton%)
-	RButton(%BlockedCount_RButton%)
+    LButton(%BlockedCount_LButton%)
+    MButton(%BlockedCount_MButton%)
+    RButton(%BlockedCount_RButton%)
 
-	LButton up(%BlockedCount_LButton_up%)
-	MButton up(%BlockedCount_MButton_up%)
-	RButton up(%BlockedCount_RButton_up%)
+    LButton up(%BlockedCount_LButton_up%)
+    MButton up(%BlockedCount_MButton_up%)
+    RButton up(%BlockedCount_RButton_up%)
 )
 return
 
@@ -261,77 +232,77 @@ Tooltip
 return
 
 Hotkey_MakeVarSafe(p_hotkey, p_ignorechars="") {
-	replace:=p_hotkey
+    replace:=p_hotkey
 
-	StringReplace, replace, replace, $, % !InStr(p_ignorechars, "$") ? "KH_":""
-	StringReplace, replace, replace, ~, % !InStr(p_ignorechars, "~") ? "PT_":""
-	StringReplace, replace, replace, *, % !InStr(p_ignorechars, "*") ? "WC_":""
+    StringReplace, replace, replace, $, % !InStr(p_ignorechars, "$") ? "KH_":""
+    StringReplace, replace, replace, ~, % !InStr(p_ignorechars, "~") ? "PT_":""
+    StringReplace, replace, replace, *, % !InStr(p_ignorechars, "*") ? "WC_":""
 
-	StringReplace, replace, replace, <^>!, AltGr_
-	StringReplace, replace, replace, <, L, a
-	StringReplace, replace, replace, >, R, a
-	StringReplace, replace, replace, &, and
+    StringReplace, replace, replace, <^>!, AltGr_
+    StringReplace, replace, replace, <, L, a
+    StringReplace, replace, replace, >, R, a
+    StringReplace, replace, replace, &, and
 
-	StringReplace, replace, replace, ^, Ctrl_, a
-	StringReplace, replace, replace, +, Shift_, a
-	StringReplace, replace, replace, #, Win_, a
-	StringReplace, replace, replace, !, Alt_, a
+    StringReplace, replace, replace, ^, Ctrl_, a
+    StringReplace, replace, replace, +, Shift_, a
+    StringReplace, replace, replace, #, Win_, a
+    StringReplace, replace, replace, !, Alt_, a
 
-	replace:=RegExReplace(replace, "i)[^a-z0-9_]", "_")
+    replace:=RegExReplace(replace, "i)[^a-z0-9_]", "_")
 
-	p_hotkey:=replace
+    p_hotkey:=replace
 
-	return p_hotkey
+    return p_hotkey
 }
 
 Hotkey_GetModifiers(p_hotkey) {
-	return RegExReplace(p_hotkey, "i)[\w\s]+$")
+    return RegExReplace(p_hotkey, "i)[\w\s]+$")
 }
 
 Hotkey_RemoveModifiers(p_hotkey) {
-	return RegExReplace(p_hotkey, "i)^[^a-z0-9_]+")
+    return RegExReplace(p_hotkey, "i)^[^a-z0-9_]+")
 }
 
 Hotkey_GetKeyName(p_hotkey) {
 
-	p_hotkey:=Hotkey_RemoveModifiers(p_hotkey)
+    p_hotkey:=Hotkey_RemoveModifiers(p_hotkey)
 
-	;// Get string before 1st space...(removes "up" or "down" from name of key)
-	Loop, Parse, p_hotkey, " "
-	{
-		p_hotkey:=A_LoopField
-		break
-	}
+    ;// Get string before 1st space...(removes "up" or "down" from name of key)
+    Loop, Parse, p_hotkey, " "
+    {
+        p_hotkey:=A_LoopField
+        break
+    }
 
-	return p_hotkey
+    return p_hotkey
 }
 
 log(p_msg, p_file="") {
-	Global Log, logfile
-	if (!Log) {
-		return
-	}
-	if (p_file="") {
-		p_file:=logfile
-	}
-	FileAppend, %p_msg%, %p_file%
+    Global Log, logfile
+    if (!Log) {
+        return
+    }
+    if (p_file="") {
+        p_file:=logfile
+    }
+    FileAppend, %p_msg%, %p_file%
 }
 
 time() {
-	FormatTime, time, L1033, ddd, MMM d, yyyy --- M/d/yy h:mm:sstt
-	return time
+    FormatTime, time, L1033, ddd, MMM d, yyyy --- M/d/yy h:mm:sstt
+    return time
 }
 
 WinGetInfo(p_win, ByRef r_win_title="", ByRef r_win_class="") {
-	WinGetTitle, win_title, %p_win%
-	WinGetClass, win_class, %p_win%
+    WinGetTitle, win_title, %p_win%
+    WinGetClass, win_class, %p_win%
 
-	r_win_title:=(win_title ? win_title:"<no-title-info>")
-	r_win_class:=(win_class ? win_class:"<no-class-info>")
+    r_win_title:=(win_title ? win_title:"<no-title-info>")
+    r_win_class:=(win_class ? win_class:"<no-class-info>")
 
-	;// wininfo:=(win_title ? win_title:"<no-title-info>") " - " (win_class ? win_class:"<no-class-info>")
-	wininfo:=(win_class ? win_class:"<no-class-info>") ": " (win_title ? win_title:"<no-title-info>")
-	return wininfo
+    ;// wininfo:=(win_title ? win_title:"<no-title-info>") " - " (win_class ? win_class:"<no-class-info>")
+    wininfo:=(win_class ? win_class:"<no-class-info>") ": " (win_title ? win_title:"<no-title-info>")
+    return wininfo
 }
 
 ;// #ScrollLock::log("*** PROBLEM ***`n")
@@ -344,25 +315,25 @@ WinGetInfo(p_win, ByRef r_win_title="", ByRef r_win_class="") {
 **   Created: Fri, Apr 11, 2008 --- 4/11/08, 11:19:19am
 **  Modified: Sat, Apr 12, 2008 --- 4/12/08, 5:38:19am
 **  Modified: Sun, Jul 10, 2011 --- 7/10/11, 3:19:19am EDT
-**  	* Added blocking of "mouse down too soon after last mouse up"
+**      * Added blocking of "mouse down too soon after last mouse up"
 **  Modified: Wed, Jul 20, 2011 --- 7/20/11, 1:19:19pm EDT
 **  Modified: Thu, Aug 25, 2011 --- 8/25/11, 1:19:19am EDT
-**  	* Temporarily disabled "mouse down too soon after last mouse up" blocking, until I get it working.
+**      * Temporarily disabled "mouse down too soon after last mouse up" blocking, until I get it working.
 **  Modified: Thu, Aug 25, 2011 --- 8/25/11, 2:38:19am EDT
-**  	* Updated Keywords for search engines
+**      * Updated Keywords for search engines
 **  Modified: Sat, Aug 27, 2011 --- 8/27/11, 7:19:19am EDT
-**  	* Added Logging
+**      * Added Logging
 **  Modified: Sat, Aug 27, 2011 --- 8/27/11, 2:38:19pm EDT
-**  	* Added Window Info to log
+**      * Added Window Info to log
 **  Modified: Sun, May 13, 2012 --- 5/13/12, 7:19:19pm EDT
-**  	* Added support for blocking mouse clicks while holding down keyboard keys
+**      * Added support for blocking mouse clicks while holding down keyboard keys
 **  Modified: Mon, May 14, 2012 --- 5/14/12, 10:19:19am EDT
-**  	* Updated Hotkey_MakeVarSafe()
+**      * Updated Hotkey_MakeVarSafe()
 **  Modified: Tue, May 15, 2012 --- 5/15/12, 7:19:19am EDT
-**  	* Hotkey_MakeVarSafe(): Fixed error msg/incompatibility with AutoHotkey < 1.1
+**      * Hotkey_MakeVarSafe(): Fixed error msg/incompatibility with AutoHotkey < 1.1
 **  Modified: Thu, Nov 1, 2012 --- 11/1/12, 10:19:19am EDT
-**  	* Made Debugging default to Off
-**  	* Added "Debug" & "Debug_OnlyBlocked" to Settings section, for easier toggling of the default state
+**      * Made Debugging default to Off
+**      * Added "Debug" & "Debug_OnlyBlocked" to Settings section, for easier toggling of the default state
 **
 */ ;// **************************** /Changelog / Version History ****************************
 
