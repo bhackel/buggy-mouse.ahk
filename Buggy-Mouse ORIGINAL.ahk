@@ -365,5 +365,3 @@ WinGetInfo(p_win, ByRef r_win_title="", ByRef r_win_class="") {
 **  	* Added "Debug" & "Debug_OnlyBlocked" to Settings section, for easier toggling of the default state
 **
 */ ;// **************************** /Changelog / Version History ****************************
-
-+^f12::ExitApp
