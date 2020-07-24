@@ -9,7 +9,7 @@
 ;// **************************** Settings ****************************
 
 ;// Minimum double-click time. Any lower & it will be blocked (as being inhumanly fast).
-DoubleClickMin_ms:=90
+DoubleClickMin_ms := 90
 
 
 ;// **************************** / Settings ****************************
@@ -34,23 +34,15 @@ Menu, Tray, Standard
 *RButton::
     A_ThisHotkey_VarSafe:=Hotkey_MakeVarSafe(A_ThisHotkey, "*")
     A_ThisHotkey_NoModifiers:=Hotkey_RemoveModifiers(A_ThisHotkey)
-    ;// A_ThisHotkey_Modifiers:=Hotkey_GetModifiers(A_ThisHotkey)
     A_ThisHotkey_KeyName:=Hotkey_GetKeyName(A_ThisHotkey)
 
-    log_key:="Down`t" A_ThisHotkey "`t"
     Critical
     di++
-
     TimeSinceLastMouseDown:=A_TickCount-LastMouseDown_ts
-
-    ;// TimeSinceLastMouseUp:=A_TickCount-LastMouseUp_ts
 
     DoubleClickTooFast:=TimeSinceLastMouseDown<=DoubleClickMin_ms
 
-    ;// *** DISABLED *** ClickAfterMouseUpTooSoon:=(ClickAfterMouseUpMin_ms!="" && TimeSinceLastMouseUp<=ClickAfterMouseUpMin_ms)
-    ;// if ((A_ThisHotkey==LastMouseDown && DoubleClickTooFast) || ClickAfterMouseUpTooSoon) {
     if (A_ThisHotkey==LastMouseDown && (DoubleClickTooFast || ClickAfterMouseUpTooSoon)) {
-    ;// if (A_TimeSincePriorHotkey<=DoubleClickMin_ms) {
         reason:=DoubleClickTooFast ? "DoubleClickTooFast" "(" TimeSinceLastMouseDown ")" "(" DoubleClickMin_ms ")"
                 : ClickAfterMouseUpTooSoon ? "ClickAfterMouseUpTooSoon" "(" TimeSinceLastMouseUp ")" "(" ClickAfterMouseUpMin_ms ")"
                 : "Unknown"
@@ -59,8 +51,6 @@ Menu, Tray, Standard
         BlockedCount_Down++
         BlockedCount_%A_ThisHotkey_VarSafe%++
         Gosub, BuggyMouse_UpdateStatus_ClicksBlocked
-
-        log_action:="BLOCKED`t"
     } else {
         reason:=""
         Send, {Blind}{%A_ThisHotkey_KeyName% DownTemp}
@@ -68,8 +58,6 @@ Menu, Tray, Standard
         (LTrim C
             if (%A_ThisHotkey%==%LastMouseDown% && (%DoubleClickTooFast% || %ClickAfterMouseUpTooSoon%))
         )
-
-        log_action:="`tallowed"
     }
     LastMouseDown:=A_ThisHotkey
     LastMouseDown_ts:=A_TickCount
@@ -80,32 +68,25 @@ return
 *RButton up::
     A_ThisHotkey_VarSafe:=Hotkey_MakeVarSafe(A_ThisHotkey, "*")
     A_ThisHotkey_NoModifiers:=Hotkey_RemoveModifiers(A_ThisHotkey)
-    ;// A_ThisHotkey_Modifiers:=Hotkey_GetModifiers(A_ThisHotkey)
     A_ThisHotkey_KeyName:=Hotkey_GetKeyName(A_ThisHotkey)
 
-    log_key:=" Up `t" A_ThisHotkey
     Critical
     ui++
     TimeSinceLastMouseUp:=A_TickCount-LastMouseUp_ts
-    ;// if (A_ThisHotkey=A_PriorHotkey && A_TimeSincePriorHotkey<=DoubleClickMin_ms) {
-    ;// if (A_ThisHotkey=LastMouseUp && A_TimeSincePriorHotkey<=DoubleClickMin_ms) {
     if (blockeddown) {
         msg=`nblocked
         blockedup:=1
         BlockedCount_Up++
         BlockedCount_%A_ThisHotkey_VarSafe%++
         Gosub, BuggyMouse_UpdateStatus_ClicksBlocked
-
-        log_action:="BLOCKED`t"
     } else {
         Send, {Blind}{%A_ThisHotkey_KeyName% up}
         msg=`nSent, {Blind}{%A_ThisHotkey_KeyName% up}
-        log_action:="`tallowed"
     }
-    blockeddown=
-    blockedup=
-    LastMouseUp:=A_ThisHotkey
-    LastMouseUp_ts:=A_TickCount
+    blockeddown = ""
+    blockedup = ""
+    LastMouseUp := A_ThisHotkey
+    LastMouseUp_ts := A_TickCount
 return
 
 BuggyMouse_UpdateStatus_ClicksBlocked:
