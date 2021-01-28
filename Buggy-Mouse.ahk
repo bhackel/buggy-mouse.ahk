@@ -104,7 +104,7 @@ BuggyMouse_MenuSelect_ClicksBlocked:
 return
 
 Hotkey_MakeVarSafe(p_hotkey, p_ignorechars="") {
-    replace:=p_hotkey
+    replace := p_hotkey
 
     StringReplace, replace, replace, $, % !InStr(p_ignorechars, "$") ? "KH_":""
     StringReplace, replace, replace, ~, % !InStr(p_ignorechars, "~") ? "PT_":""
@@ -120,15 +120,11 @@ Hotkey_MakeVarSafe(p_hotkey, p_ignorechars="") {
     StringReplace, replace, replace, #, Win_, a
     StringReplace, replace, replace, !, Alt_, a
 
-    replace:=RegExReplace(replace, "i)[^a-z0-9_]", "_")
+    replace := RegExReplace(replace, "i)[^a-z0-9_]", "_")
 
-    p_hotkey:=replace
+    p_hotkey := replace
 
     return p_hotkey
-}
-
-Hotkey_GetModifiers(p_hotkey) {
-    return RegExReplace(p_hotkey, "i)[\w\s]+$")
 }
 
 Hotkey_RemoveModifiers(p_hotkey) {
